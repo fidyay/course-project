@@ -6,12 +6,18 @@
 using namespace std;
 
 bool checkPasswortValidity(string password) {
-    smatch m; 
-    if (regex_match(password, regex("[a-zA-Z!@#$%^&*]")) && regex_search(password, m, regex("[a-z]")) && regex_search(password, m, regex("[A-Z]")) && regex_search(password, m, regex("[!@#$%^&*]")) && password.length() >= 5) {
-        return true;
-    } else {
-        return false;
-    }
+    const string passwordPattern = "[a-zA-Z0-9!@#$%^&*]+";
+    const regex passwordReg(passwordPattern);
+    if (!regex_match(password, passwordReg)) return false;
+    const string lowercase = "(?=.*[a-z])";
+    const string uppercase = "(?=.*[A-Z])";
+    const string numbers = "(?=.*[0-9])";
+    const string special = "(?=.*[!@#$%^&*])";
+    const string length = "(?=.{5,})";
+    const string fullPattern = lowercase + uppercase + numbers + special + length;
+    const regex fullPatternReg(fullPattern);
+    if (!regex_search(password, fullPatternReg)) return false;
+    return true;
 }
 
 int main() {
@@ -36,7 +42,9 @@ int main() {
                         string newName;
                         cout << "Name: ";
                         cin >> newName;
-                        if (regex_match(newName, regex("[a-zA-Z]"))) {
+                        const string namePattern = "[a-zA-Z]+";
+                        const regex nameReg(namePattern);
+                        if (regex_match(newName, nameReg)) {
                             name = newName;
                             nameFound = true;
                         } else {
