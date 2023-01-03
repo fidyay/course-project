@@ -5,6 +5,14 @@
 
 using namespace std;
 
+string hashPassword(string pw) {
+    string hash = "";
+    for (int i = 0; i < pw.length(); i++) {
+        hash += pw[i] ^ '!';
+    }
+    return hash;
+}
+
 bool checkPasswortValidity(string password) {
     const string passwordPattern = "[a-zA-Z0-9!@#$%^&*]+";
     const regex passwordReg(passwordPattern);
@@ -20,19 +28,47 @@ bool checkPasswortValidity(string password) {
     return true;
 }
 
+bool isNameUnique(vector<string> users, string name) {
+    const string namePattern = "^" + name + ".*";
+    const regex nameReg(namePattern);
+    for (int i = 0; i < users.size(); i++) {
+        if (regex_match(users[i], nameReg)) return false;
+    }
+    return true;
+}
+
 int main() {
-    const string controlsNotEnteredInAccount = "L - login\nR - register\nQ - quit\n";
-    const string controlsEnteredInAccount = "C - cancel account\nD - deposit\nL - logout\nT - transfer\nW - withdraw\n";
+    const string ControlsNotEnteredInAccount = "L - login\nR - register\nQ - quit\n";
+    const string ControlsEnteredInAccount = "C - cancel account\nD - deposit\nL - logout\nT - transfer\nW - withdraw\n";
     bool enteredAccout = false;
     bool shouldContinue = true;
     vector<string> users {};
     while (shouldContinue) {
         if (!enteredAccout) {
-            cout << controlsNotEnteredInAccount;
+            cout << ControlsNotEnteredInAccount;
             char command;
             cin >> command;
             switch(command) {
                 case 'L':
+                    if (users.size() == 0) {
+                        cout << "No user accounts created" << endl;
+                    } else {
+                        cout << "Name: ";
+                        string name = "";
+                        cin >> name;
+                        cout << "Password: ";
+                        string password = "";
+                        cin >> password;
+                        const string accountPattern = "^" + name + ":" + hashPassword(password) + ":.*";
+                        const regex accountPatternReg(accountPattern);
+                        for (int i = 0; i < users.size(); i++) {
+                            if (regex_match(users[i], accountPatternReg)) {
+                                enteredAccout = true;
+                                break;
+                            }
+                        }
+                        if (!enteredAccout) cout << "Name or password is invalid" << endl;
+                    }
                     break;
                 case 'R': {
                     cout << "Name can only include latin letters or symbols" << endl;
@@ -45,8 +81,13 @@ int main() {
                         const string namePattern = "[a-zA-Z]+";
                         const regex nameReg(namePattern);
                         if (regex_match(newName, nameReg)) {
-                            name = newName;
-                            nameFound = true;
+                            if (isNameUnique(users, newName)) {
+                                name = newName;
+                                nameFound = true;
+                            } else {
+                                cout << "Name is already taken" << endl;
+                            }
+                            
                         } else {
                             cout << "Invalid name" << endl;
                         }
@@ -64,11 +105,33 @@ int main() {
                         } else {
                             cout << "Invalid password" << endl;
                         }
+                    users.push_back(name + ":" + hashPassword(password) + ":0");
+                    enteredAccout = true;
                     }
                     break;
                     }
                 case 'Q':
                     shouldContinue = false;
+                    break;
+                default: 
+                    cout << "Unknown command" << endl;
+                    break;
+            }
+        } else {
+            cout << ControlsEnteredInAccount;
+            char command;
+            cin >> command;
+            switch(command) {
+                case 'C':
+                    break;
+                case 'D':
+                    break;
+                case 'L':
+                    enteredAccout = false;
+                    break;
+                case 'T':
+                    break;
+                case 'W':
                     break;
                 default: 
                     cout << "Unknown command" << endl;
