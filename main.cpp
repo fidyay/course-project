@@ -163,9 +163,26 @@ int main() {
             cin >> command;
             switch(command) {
                 case 'C':
-                    users.erase(users.begin() + currentAccount);
-                    enteredAccout = false;
-                    currentAccount = -1;
+                    {
+                        string password = "";
+                        cout << "Password: ";
+                        cin >> password;
+                        string passwordHash = hashPassword(password);
+                        string accountDataWithoutBalance = sliceString(users[currentAccount], getLastIndexOf(users[currentAccount], ':') - 1);
+                        string userName = sliceString(accountDataWithoutBalance, getLastIndexOf(accountDataWithoutBalance, ':'));
+                        if (userName + passwordHash == accountDataWithoutBalance) {
+                            double balance = getNumberFromAccount(users[currentAccount]);
+                            if (balance == 0) {
+                                users.erase(users.begin() + currentAccount);
+                                enteredAccout = false;
+                                currentAccount = -1;
+                            } else {
+                                cout << "Denied. Balance must be 0." << endl;
+                            }
+                        } else {
+                            cout << "Wrong password." << endl;
+                        }
+                    }
                     break;
                 case 'D':
                 {
