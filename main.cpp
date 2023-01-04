@@ -65,6 +65,17 @@ void showStatusAndControlsEnteredAccount(string account) {
     cout << "You have " << getNumberFromAccount(account) << " BGN. Choose one of the following options:\nC - cancel account\nD - deposit\nL - logout\nT - transfer\nW - withdraw\n";
 }
 
+double getAmountOfMoneyFromTerminal() {
+    string amount = "";
+    cout << "Amount: ";
+    cin >> amount;
+    int indexOfDot = getLastIndexOf(amount, '.');
+    if (amount.size() - indexOfDot > 2 && indexOfDot != -1) {
+        amount = sliceString(amount, indexOfDot + 2);
+    }
+    return stod(amount);
+}
+
 int main() {
     const string ControlsNotEnteredInAccount = "L - login\nR - register\nQ - quit\n";
     bool enteredAccout = false;
@@ -157,7 +168,17 @@ int main() {
                     currentAccount = -1;
                     break;
                 case 'D':
+                {
+                    double numToAdd = getAmountOfMoneyFromTerminal();
+                    if (numToAdd > 0) {
+                        double balance = getNumberFromAccount(users[currentAccount]);
+                        double sum = balance + numToAdd;
+                        users[currentAccount] = sliceString(users[currentAccount], getLastIndexOf(users[currentAccount], ':')) + to_string(sum);
+                    } else {
+                        cout << "The amount should be bigger than 0." << endl;
+                    }
                     break;
+                }
                 case 'L':
                     enteredAccout = false;
                     currentAccount = -1;
@@ -165,6 +186,21 @@ int main() {
                 case 'T':
                     break;
                 case 'W':
+                    {
+                    double balance = getNumberFromAccount(users[currentAccount]);
+                    if (balance != -10000) {
+                        double numToSubstr = getAmountOfMoneyFromTerminal();
+                        if (numToSubstr > 0) {
+                            double sum = balance - numToSubstr;
+                            if (sum < -10000) sum = -10000;
+                            users[currentAccount] = sliceString(users[currentAccount], getLastIndexOf(users[currentAccount], ':')) + to_string(sum);
+                        } else {
+                            cout << "The amount should be bigger than 0." << endl;
+                        }
+                    } else {
+                        cout << "Denied. Max overdraft." << endl;
+                    }
+                    }
                     break;
                 default: 
                     cout << "Unknown command" << endl;
