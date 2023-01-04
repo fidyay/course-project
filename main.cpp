@@ -184,22 +184,59 @@ int main() {
                     currentAccount = -1;
                     break;
                 case 'T':
+                    {
+                        double balance = getNumberFromAccount(users[currentAccount]);
+                        if (balance != -10000) {
+                            string receiverName = "";
+                            cout << "Receiver's name: ";
+                            cin >> receiverName;
+                            const string namePattern = "^" + receiverName + ".*";
+                            const regex nameReg(namePattern);
+                            int userIndex = -1;
+                            for (int i = 0; i < users.size(); i++) {
+                                if (regex_match(users[i], nameReg)) {
+                                    userIndex = i;
+                                    break;
+                                }
+                            }
+                            if (userIndex != -1) {
+                                double numToSubstr = getAmountOfMoneyFromTerminal();
+                                if (numToSubstr > 0) {
+                                    double sum = balance - numToSubstr;
+                                    if (sum < -10000) {
+                                        sum = -10000;
+                                        numToSubstr = balance - -10000;
+                                    }
+                                    users[currentAccount] = sliceString(users[currentAccount], getLastIndexOf(users[currentAccount], ':')) + to_string(sum);
+                                    double receiverBalance = getNumberFromAccount(users[userIndex]);
+                                    double receiversSum = receiverBalance + numToSubstr;
+                                    users[userIndex] = sliceString(users[userIndex], getLastIndexOf(users[userIndex], ':')) + to_string(receiversSum);
+                                } else {
+                                    cout << "The amount should be bigger than 0." << endl;
+                                }
+                            } else {
+                                cout << "Receiver does not exist." << endl;
+                            }
+                        } else {
+                            cout << "Denied. Max overdraft." << endl;
+                        }
+                    }
                     break;
                 case 'W':
                     {
-                    double balance = getNumberFromAccount(users[currentAccount]);
-                    if (balance != -10000) {
-                        double numToSubstr = getAmountOfMoneyFromTerminal();
-                        if (numToSubstr > 0) {
-                            double sum = balance - numToSubstr;
-                            if (sum < -10000) sum = -10000;
-                            users[currentAccount] = sliceString(users[currentAccount], getLastIndexOf(users[currentAccount], ':')) + to_string(sum);
+                        double balance = getNumberFromAccount(users[currentAccount]);
+                        if (balance != -10000) {
+                            double numToSubstr = getAmountOfMoneyFromTerminal();
+                            if (numToSubstr > 0) {
+                                double sum = balance - numToSubstr;
+                                if (sum < -10000) sum = -10000;
+                                users[currentAccount] = sliceString(users[currentAccount], getLastIndexOf(users[currentAccount], ':')) + to_string(sum);
+                            } else {
+                                cout << "The amount should be bigger than 0." << endl;
+                            }
                         } else {
-                            cout << "The amount should be bigger than 0." << endl;
+                            cout << "Denied. Max overdraft." << endl;
                         }
-                    } else {
-                        cout << "Denied. Max overdraft." << endl;
-                    }
                     }
                     break;
                 default: 
