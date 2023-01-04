@@ -52,9 +52,21 @@ bool isNameUnique(vector<string> users, string name) {
     return true;
 }
 
+double getNumberFromAccount(string account) {
+    int index = getLastIndexOf(account, ':');
+    string numberString = "";
+    for (int i = index + 1; i < account.size(); i++) {
+        numberString += account[i];
+    }
+    return stod(numberString);
+}
+
+void showStatusAndControlsEnteredAccount(string account) {
+    cout << "You have " << getNumberFromAccount(account) << " BGN. Choose one of the following options:\nC - cancel account\nD - deposit\nL - logout\nT - transfer\nW - withdraw\n";
+}
+
 int main() {
     const string ControlsNotEnteredInAccount = "L - login\nR - register\nQ - quit\n";
-    const string ControlsEnteredInAccount = "C - cancel account\nD - deposit\nL - logout\nT - transfer\nW - withdraw\n";
     bool enteredAccout = false;
     bool shouldContinue = true;
     vector<string> users {};
@@ -135,11 +147,14 @@ int main() {
                     break;
             }
         } else {
-            cout << ControlsEnteredInAccount;
+            showStatusAndControlsEnteredAccount(users[currentAccount]);
             char command;
             cin >> command;
             switch(command) {
                 case 'C':
+                    users.erase(users.begin() + currentAccount);
+                    enteredAccout = false;
+                    currentAccount = -1;
                     break;
                 case 'D':
                     break;
