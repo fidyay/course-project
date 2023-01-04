@@ -13,6 +13,21 @@ string hashPassword(string pw) {
     return hash;
 }
 
+int getLastIndexOf(string str, char c) {
+    for (int i = str.size() - 1; i >= 0; i--) {
+        if (str[i] == c) return i;
+    }
+    return -1;
+}
+
+string sliceString(string str, int index) {
+    string returnString = "";
+    for (int i = 0; i <= index; i++) {
+        returnString += str[i];
+    }
+    return returnString;
+}
+
 bool checkPasswortValidity(string password) {
     const string passwordPattern = "[a-zA-Z0-9!@#$%^&*]+";
     const regex passwordReg(passwordPattern);
@@ -43,6 +58,7 @@ int main() {
     bool enteredAccout = false;
     bool shouldContinue = true;
     vector<string> users {};
+    int currentAccount = -1;
     while (shouldContinue) {
         if (!enteredAccout) {
             cout << ControlsNotEnteredInAccount;
@@ -59,10 +75,10 @@ int main() {
                         cout << "Password: ";
                         string password = "";
                         cin >> password;
-                        const string accountPattern = "^" + name + ":" + hashPassword(password) + ":.*";
-                        const regex accountPatternReg(accountPattern);
+                        const string accountPattern = name + ":" + hashPassword(password) + ":";
                         for (int i = 0; i < users.size(); i++) {
-                            if (regex_match(users[i], accountPatternReg)) {
+                            if (sliceString(users[i], getLastIndexOf(users[i], ':')) == accountPattern) {
+                                currentAccount = i;
                                 enteredAccout = true;
                                 break;
                             }
@@ -105,6 +121,7 @@ int main() {
                         } else {
                             cout << "Invalid password" << endl;
                         }
+                    currentAccount = users.size();
                     users.push_back(name + ":" + hashPassword(password) + ":0");
                     enteredAccout = true;
                     }
@@ -128,6 +145,7 @@ int main() {
                     break;
                 case 'L':
                     enteredAccout = false;
+                    currentAccount = -1;
                     break;
                 case 'T':
                     break;
