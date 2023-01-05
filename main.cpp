@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <regex>
+#include <fstream>
 
 using namespace std;
 
@@ -81,6 +82,14 @@ int main() {
     bool enteredAccout = false;
     bool shouldContinue = true;
     vector<string> users {};
+    ifstream readBase("users.txt");
+    if (readBase.is_open()) {
+        string line = "";
+        while(getline(readBase, line)) {
+            users.push_back(line);
+        }
+    }
+    readBase.close();
     int currentAccount = -1;
     while (shouldContinue) {
         if (!enteredAccout) {
@@ -262,5 +271,10 @@ int main() {
             }
         }
     }
+    ofstream writeBase("users.txt");
+    for (int i = 0; i < users.size(); i++) {
+        writeBase << users[i] << endl;
+    }
+    writeBase.close();
     return 0;
 }
