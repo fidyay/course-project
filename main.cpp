@@ -1,3 +1,18 @@
+/**
+*  
+* Solution to course project # <номер на вариант>
+* Introduction to programming course
+* Faculty of Mathematics and Informatics of Sofia University
+* Winter semester 2022/2023
+*
+* @author Stanislav Fidiyov
+* @idnumber 7MI8000032
+* @compiler GCC
+*
+* Implementation of program
+*
+*/
+
 #include <iostream>
 #include <string>
 #include <vector>
